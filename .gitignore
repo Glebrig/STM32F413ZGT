@@ -53,4 +53,4 @@ dkms.conf
 
 # Сборка и дрова
 build/
-#Drivers/
+Drivers/
