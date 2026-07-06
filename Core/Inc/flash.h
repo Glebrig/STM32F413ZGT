@@ -48,5 +48,7 @@ void     Flash_WriteEnable(void);
 void     Flash_SectorErase(uint32_t address);
 void     Flash_PageProgram(uint32_t address, uint8_t *data, uint32_t size);
 void     Flash_Read(uint32_t address, uint8_t *buffer, uint32_t size);
+void     Flash_FillMemory(uint8_t pattern);
+void     Flash_DumpAllMemory();
 
 #endif // FLASH_H

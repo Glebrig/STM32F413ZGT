@@ -58,15 +58,6 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-
-// Переопределяем системный вызов _write для printf
-int _write(int file, char *ptr, int len) {
-    for (int i = 0; i < len; i++) {
-        HAL_UART_Transmit(&huart10, (uint8_t*)&ptr[i], 1, HAL_MAX_DELAY);
-    }
-    return len;
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -106,17 +97,25 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-//  Настроить PE0 как выход
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_5;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;   // Push‑pull
-  GPIO_InitStruct.Pull = GPIO_NOPULL;           // Без подтяжки
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;  // Низкая скорость
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-
   //  PE0, PE1 в 0
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
+  
+  printf("\n\n");
+  uint32_t id = Flash_ReadID();
+  while (id != 0xC22017){ id = Flash_ReadID();}
+ // if (id == 0xC22017) {
+    // запись данных во всю флеш-память (полностью заполнить) + сохранение в файл (чтение + через логи?)
+    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
+    Flash_FillMemory(0x01);
+    printf("\nWrite\n");
+   //  HAL_Delay(5000);
+    //  printf("\n");
+    // Flash_DumpAllMemory();
+    
+  // }
+  // else {printf("\nerror\n");}
+
 
   while (1)
   {
@@ -127,29 +126,24 @@ int main(void)
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_SET);
    
+    //uint32_t id = Flash_ReadID();
     HAL_Delay(500);
     
+    // if (id == 0xC22017) {
+    //     uint8_t write_data[] = "Hello!";
+    //     Flash_SectorErase(0x00000);
+    //     Flash_PageProgram(0x00000, write_data, sizeof(write_data));
+    //     uint8_t read_buffer[20];
+    //     Flash_Read(0x00000, read_buffer, sizeof(write_data));
+    //     printf("Read data: %s\r\n", read_buffer);
+
+    // } else {
+    //     printf("ERROR");
+    // } 
+
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_RESET);
 
-  
-    printf("\n\n");
-    uint32_t id = Flash_ReadID();
-
-      if (id == 0xC22017) {
-        // Пример записи и чтения
-        uint8_t write_data[] = "Hello!";
-        // Flash_SectorErase(0x00001);
-        // Flash_PageProgram(0x00001, write_data, sizeof(write_data));
-
-        uint8_t read_buffer[20];
-        Flash_Read(0x00001, read_buffer, sizeof(write_data));
-        printf("Read data: %s\r\n", read_buffer);
-    } else {
-        printf("ERROR");
-    } 
-
-   
     HAL_Delay(2000);
 
   }

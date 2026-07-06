@@ -41,7 +41,8 @@ extern UART_HandleTypeDef huart10;
 void MX_UART10_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+// Переопределяем системный вызов _write для printf
+int _write(int file, char *ptr, int len);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

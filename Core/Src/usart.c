@@ -109,6 +109,11 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
-
+int _write(int file, char *ptr, int len) {
+    for (int i = 0; i < len; i++) {
+        HAL_UART_Transmit(&huart10, (uint8_t*)&ptr[i], 1, HAL_MAX_DELAY);
+    }
+    return len;
+}
 /* USER CODE END 1 */
 
