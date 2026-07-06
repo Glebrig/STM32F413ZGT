@@ -57,6 +57,7 @@ Core/Src/sysmem.c \
 Core/Src/syscalls.c \
 Core/Src/gpio.c \
 Core/Src/flash.c \
+Core/Src/nand.c \
 Core/Src/usart.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
 

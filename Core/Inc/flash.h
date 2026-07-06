@@ -40,6 +40,9 @@
 // Прототипы функций
 // ------------------------------------------------------------------------
 void     SPI_Delay(void);
+uint8_t SPI_TransmitReceive(uint8_t data);
+void SPI_Transmit(uint8_t data);
+
 
 uint32_t Flash_ReadID(void);
 uint8_t  Flash_ReadStatus(void);

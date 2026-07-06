@@ -107,11 +107,11 @@ int main(void)
  // if (id == 0xC22017) {
     // запись данных во всю флеш-память (полностью заполнить) + сохранение в файл (чтение + через логи?)
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
-    Flash_FillMemory(0x01);
-    printf("\nWrite\n");
-   //  HAL_Delay(5000);
-    //  printf("\n");
-    // Flash_DumpAllMemory();
+   // Flash_FillMemory(0x01);
+   // printf("\nWrite\n");
+    printf("\n");
+    HAL_Delay(100);
+    Flash_DumpAllMemory();
     
   // }
   // else {printf("\nerror\n");}

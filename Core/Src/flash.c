@@ -9,7 +9,7 @@ void SPI_Delay(void) {
     for (volatile int i = 0; i < 200; i++);
 }
 
-static uint8_t SPI_TransmitReceive(uint8_t data) {
+uint8_t SPI_TransmitReceive(uint8_t data) {
     uint8_t received = 0;
 
     // Передаём биты, начиная со старшего
@@ -38,7 +38,7 @@ static uint8_t SPI_TransmitReceive(uint8_t data) {
     return received;
 }
 
-static void SPI_Transmit(uint8_t data) {
+void SPI_Transmit(uint8_t data) {
     for (int i = 7; i >= 0; i--) {
         if (data & (1 << i))
             FLASH_MOSI_HIGH();
@@ -107,7 +107,6 @@ void Flash_WaitForReady(void) {
         }
     }
 }
-
 
 void Flash_WriteEnable(void) {
     FLASH_CS_LOW();
@@ -259,65 +258,3 @@ void Flash_DumpAllMemory() {
         current_addr += chunk_size;
     }
 }
-
-/*
-проблема записи:
-FLASH ID = 0xC22017
-[  0%] Sector 0 / 2048 at 0x00000000
-[  4%] Sector 100 / 2048 at 0x00064000
-[  9%] Sector 200 / 2048 at 0x000C8000
-[ 14%] Sector 300 / 2048 at 0x0012C000
-[ 19%] Sector 400 / 2048 at 0x00190000
-[ 24%] Sector 500 / 2048 at 0x001F4000
-[ 29%] Sector 600 / 2048 at 0x00258000
-[ 34%] Sector 700 / 2048 at 0x002BC000
-[ 39%] Sector 800 / 2048 at 0x00320000
-[ 43%] Sector 900 / 2048 at 0x00384000
-[ 48%] Sector 1000 / 2048 at 0x003E8000
-[ 53%] Sector 1100 / 2048 at 0x0044C000
-[ 58%] Sector 1200 / 2048 at 0x004B0000
-[ 63%] Sector 1300 / 2048 at 0x00514000
-[ 68%] Sector 1400 / 2048 at 0x00578000
-[ 73%] Sector 1500 / 2048 at 0x005DC000
-[ 78%] Sector 1600 / 2048 at 0x00640000
-[ 83%] Sector 1700 / 2048 at 0x006A4000
-[ 87%] Sector 1800 / 2048 at 0x00708000
-[ 92%] Sector 1900 / 2048 at 0x0076C000
-[ 97%] Sector 2000 / 2048 at 0x007D0000
-
-и всё, не доходит до 2048
-
-+ виснет при попытке записать, то есть проблема в:
-  Flash_SectorErase(sector_addr);
-        
-        // Записываем страницы внутри сектора
-        for (uint32_t page = 0; page < SECTOR_SIZE / PAGE_SIZE; page++) {
-            uint32_t page_addr = sector_addr + page * PAGE_SIZE;
-            
-            // Обновляем буфер с разными данными для каждой страницы
-            // for (uint32_t i = 0; i < PAGE_SIZE; i++) {
-            //     buffer[i] = pattern + (page & 0xFF) + (i & 0xFF);
-            // }
-            
-            Flash_PageProgram(page_addr, buffer, PAGE_SIZE);
-        }
-
-
-Проблема чтения:
-FLASH ID = 0xC22017
-FILL[  0%] 0x00000000
-��������������������������������������������������������������������������������������
-
-
-123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~������������������������������������������[  0%] 0x00000100
-�������������������������������������������������������������������������������������
-
-
-123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~�������������������������������������������[  0%] 0x00000200
-������������������������������������������������������������������������������������
-
-
-123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~��������������������������������������������[  0%] 0x00000300
-�����������������������������������������������������������������������������������
-
-*/
