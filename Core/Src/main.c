@@ -101,20 +101,53 @@ int main(void)
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
   
-  printf("\n\n");
-  uint32_t id = Flash_ReadID();
-  while (id != 0xC22017){ id = Flash_ReadID();}
- // if (id == 0xC22017) {
-    // запись данных во всю флеш-память (полностью заполнить) + сохранение в файл (чтение + через логи?)
-    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
-   // Flash_FillMemory(0x01);
-   // printf("\nWrite\n");
-    printf("\n");
-    HAL_Delay(100);
-    Flash_DumpAllMemory();
+//   printf("\n\n");
+//   uint32_t id = Flash_ReadID();
+//   while (id != 0xC22017){ id = Flash_ReadID();}
+//  // if (id == 0xC22017) {
+//     // запись данных во всю флеш-память (полностью заполнить) + сохранение в файл (чтение + через логи?)
+//     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
+//    // Flash_FillMemory(0x01);
+//    // printf("\nWrite\n");
+//     printf("\n");
+//     HAL_Delay(100);
+//     Flash_DumpAllMemory();
     
   // }
   // else {printf("\nerror\n");}
+
+
+
+
+
+// Чтение JEDEC ID
+    FLASH_CS_LOW();
+    SPI_Transmit(0x9F);
+    SPI_Transmit(0xFF);
+    uint8_t mid = SPI_TransmitReceive(0xFF);
+    uint8_t did1 = SPI_TransmitReceive(0xFF);
+    uint8_t did2 = SPI_TransmitReceive(0xFF);
+    FLASH_CS_HIGH();
+    
+    printf("ID: 0x%02X %02X %02X\r\n", mid, did1, did2);
+    HAL_Delay(500);
+    if (mid == 0xCD && did1 == 0x70 && did2 == 0x70) {
+        
+        // // Читаем блок 0
+        // uint8_t *buffer = malloc(128 * 1024);  // 128 КБ
+        // if (buffer != NULL) {
+        //     NAND_ReadBlock(0, buffer);
+        //     free(buffer);
+        // }
+        
+        //Дамп блока (без сохранения в буфер)
+        NAND_DumpBlock(0);
+    } else {
+        printf("\r\nERROR!\r\n");
+    }
+
+
+
 
 
   while (1)
