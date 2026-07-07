@@ -101,20 +101,63 @@ int main(void)
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
   
-  printf("\n\n");
-  uint32_t id = Flash_ReadID();
-  while (id != 0xC22017){ id = Flash_ReadID();}
- // if (id == 0xC22017) {
-    // запись данных во всю флеш-память (полностью заполнить) + сохранение в файл (чтение + через логи?)
-    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
-   // Flash_FillMemory(0x01);
-   // printf("\nWrite\n");
-    printf("\n");
-    HAL_Delay(100);
-    Flash_DumpAllMemory();
+//   printf("\n\n");
+//   uint32_t id = Flash_ReadID();
+//   while (id != 0xC22017){ id = Flash_ReadID();}
+//  // if (id == 0xC22017) {
+//     // запись данных во всю флеш-память (полностью заполнить) + сохранение в файл (чтение + через логи?)
+//     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
+//    // Flash_FillMemory(0x01);
+//    // printf("\nWrite\n");
+//     printf("\n");
+//     HAL_Delay(100);
+//     Flash_DumpAllMemory();
     
   // }
   // else {printf("\nerror\n");}
+
+
+
+
+
+// Чтение ID
+    FLASH_CS_LOW();
+    SPI_Transmit(0x9F);
+    SPI_Transmit(0xFF);
+    uint8_t id1 = SPI_TransmitReceive(0xFF);
+    uint8_t id2 = SPI_TransmitReceive(0xFF);
+    uint8_t id3 = SPI_TransmitReceive(0xFF);
+    FLASH_CS_HIGH();
+    
+    printf("ID: 0x%02X %02X %02X\r\n", id1, id2, id3);
+    HAL_Delay(500);
+    if (id1 == 0xCD && id2 == 0x70 && id3 == 0x70) {
+        
+        // // Читаем блок 0
+        // uint8_t *buffer = malloc(128 * 1024);  // 128 КБ
+        // if (buffer != NULL) {
+        //     NAND_ReadBlock(0, buffer);
+        //     free(buffer);
+        // }
+        
+        //Дамп блока
+        NAND_DumpBlock(0);
+        
+        // uint8_t buffer[256];
+        // NAND_ReadPage(0x0001, 0, buffer, 256);
+
+        // printf("Page 1 data:\r\n");
+        // for (int i = 0; i < 256; i++) {
+        //   if (i % 16 == 0) {printf("\r\n%04X: ", i);}
+        //   printf("%02X ", buffer[i]);
+        // }
+
+    } else {
+        printf("\r\nERROR!\r\n");
+    }
+
+
+
 
 
   while (1)
