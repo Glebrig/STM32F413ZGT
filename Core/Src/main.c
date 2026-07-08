@@ -97,15 +97,13 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  //  PE0, PE1 в 0
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_SET);
   
 //   printf("\n\n");
 //   uint32_t id = Flash_ReadID();
 //   while (id != 0xC22017){ id = Flash_ReadID();}
 //  // if (id == 0xC22017) {
-//     // запись данных во всю флеш-память (полностью заполнить) + сохранение в файл (чтение + через логи?)
+//     // запись данных во всю флеш-память + сохранение в файл
 //     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
 //    // Flash_FillMemory(0x01);
 //    // printf("\nWrite\n");
@@ -156,7 +154,7 @@ int main(void)
         printf("\r\nERROR!\r\n");
     }
 
-
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
 
 
 
