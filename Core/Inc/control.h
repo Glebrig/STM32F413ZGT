@@ -17,7 +17,6 @@
 
 
 void Delay(void);
-uint8_t TransmitReceive(uint8_t data);
 void Transmit(uint8_t data);
 uint8_t Receive(void);
 

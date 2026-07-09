@@ -134,7 +134,7 @@ int main(void)
         // }
         
         //Дамп блока
-        NAND_DumpBlock(1);
+        NAND_DumpBlock(0);
         
         // uint8_t buffer[256];
         // NAND_ReadPage(0x0001, 0, buffer, 256);
