@@ -56,6 +56,7 @@ Core/Src/system_stm32f4xx.c \
 Core/Src/sysmem.c \
 Core/Src/syscalls.c \
 Core/Src/gpio.c \
+Core/Src/control.c \
 Core/Src/flash.c \
 Core/Src/nand.c \
 Core/Src/usart.c \

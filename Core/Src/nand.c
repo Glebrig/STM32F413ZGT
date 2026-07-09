@@ -3,25 +3,24 @@
 
 void NAND_ReadPage(uint16_t page_addr, uint16_t col_addr, uint8_t *buffer, uint32_t size) {
     if (size > 2048) size = 2048;
-    
-    FLASH_CS_LOW();
-    SPI_Transmit(0x13);
-    SPI_Transmit(0x00);
-    SPI_Transmit((page_addr >> 8) & 0xFF);
-    SPI_Transmit(page_addr & 0xFF);
-    FLASH_CS_HIGH();
+    ResetCS();
+    Transmit(0x13);
+    Transmit(0x00);
+    Transmit((page_addr >> 8) & 0xFF);
+    Transmit(page_addr & 0xFF);
+    SetCS();
     
     NAND_WaitForReady();
     
-    FLASH_CS_LOW();
-    SPI_Transmit(0x03);
-    SPI_Transmit((col_addr >> 8) & 0xFF);
-    SPI_Transmit(col_addr & 0xFF);
+    ResetCS();
+    Transmit(0x03);
+    Transmit((col_addr >> 8) & 0xFF);
+    Transmit(col_addr & 0xFF);
     
     for (uint32_t i = 0; i < size; i++) {
-        buffer[i] = SPI_TransmitReceive(0xFF);
+        buffer[i] = Receive();
     }
-    FLASH_CS_HIGH();
+    SetCS();
 }
 
 // void NAND_ReadBlock(uint16_t block_addr, uint8_t *buffer) {
@@ -39,8 +38,7 @@ void NAND_ReadPage(uint16_t page_addr, uint16_t col_addr, uint8_t *buffer, uint3
         
 //         // Читаем страницу
 //         NAND_ReadPage(page_addr, 0, &buffer[offset], PAGE_SIZE);
-        
-//         // Вывод первых 256 байт страницы
+
 //         for (int i = 0; i < 256; i++) {
 //             if (i % 16 == 0) {
 //                 if (i > 0) printf("\r\n");
@@ -59,11 +57,11 @@ void NAND_WaitForReady(void) {
     uint32_t timeout = 1000000;
     
     do {
-        FLASH_CS_LOW();
-        SPI_Transmit(0x0F);
-        SPI_Transmit(0xC0);
-        status = SPI_TransmitReceive(0xFF);
-        FLASH_CS_HIGH();
+        ResetCS();
+        Transmit(0x0F);
+        Transmit(0xC0);
+        status = Receive();
+        SetCS();
         
         if (--timeout == 0) {
             printf("ERROR\r\n");
@@ -92,4 +90,19 @@ void NAND_DumpBlock(uint16_t block_addr) {
         }
         printf("\r\n");
     }
+}
+
+
+uint32_t NAND_ReadID(void){
+    uint32_t id = 0;
+    
+    ResetCS();
+    Transmit(0x9F);     
+    Transmit(0xFF);
+    
+    id = (Receive() << 16) | (Receive() << 8)  | Receive();           
+    
+    SetCS();
+    
+    return id;
 }

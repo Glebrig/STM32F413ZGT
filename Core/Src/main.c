@@ -15,7 +15,9 @@
   *
   ******************************************************************************
   */
+#include "control.h"
 #include "flash.h"
+#include "nand.h"
 #include "stdio.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -119,17 +121,10 @@ int main(void)
 
 
 // Чтение ID
-    FLASH_CS_LOW();
-    SPI_Transmit(0x9F);
-    SPI_Transmit(0xFF);
-    uint8_t id1 = SPI_TransmitReceive(0xFF);
-    uint8_t id2 = SPI_TransmitReceive(0xFF);
-    uint8_t id3 = SPI_TransmitReceive(0xFF);
-    FLASH_CS_HIGH();
-    
-    printf("ID: 0x%02X %02X %02X\r\n", id1, id2, id3);
+    uint32_t id = NAND_ReadID();  
+    printf("\r\nID: 0x%06X\r\n", id);
     HAL_Delay(500);
-    if (id1 == 0xCD && id2 == 0x70 && id3 == 0x70) {
+    if (id == 0xCD7070) {
         
         // // Читаем блок 0
         // uint8_t *buffer = malloc(128 * 1024);  // 128 КБ
@@ -139,7 +134,7 @@ int main(void)
         // }
         
         //Дамп блока
-        NAND_DumpBlock(0);
+        NAND_DumpBlock(1);
         
         // uint8_t buffer[256];
         // NAND_ReadPage(0x0001, 0, buffer, 256);
@@ -155,7 +150,6 @@ int main(void)
     }
 
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_0, GPIO_PIN_RESET);
-
 
 
   while (1)
@@ -185,7 +179,7 @@ int main(void)
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, GPIO_PIN_SET);
     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, GPIO_PIN_RESET);
 
-    HAL_Delay(2000);
+    HAL_Delay(500);
 
   }
   /* USER CODE END 3 */
